@@ -2,9 +2,10 @@
 
 void print_combination_3(void)         
 {
-	for (int u = 0; u < 10; u++) { /* loop for first digit */
-		for (int o = 0; o < 10; o++) { /* loop for second digit */
-			for (int p = 0; p < 10; p++) { /* loop for third digit */
+	int u,o,p;
+	for (u = 0; u < 10; u++) { /* loop for first digit */
+		for (o = 0; o < 10; o++) { /* loop for second digit */
+			for (p = 0; p < 10; p++) { /* loop for third digit */
 				if (o >= u) {
 					if (p >= o) {
 						if (u != o && o != p && p != u) {
