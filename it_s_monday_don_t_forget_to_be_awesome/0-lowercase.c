@@ -1,8 +1,7 @@
-#include <stdio.h>
-#include <ctype.h>
-
 char lowercase(char c)
 {
-	c = tolower(c);
+  if (c > 64 && c < 91) {
+		c = c + 32;
+   	}
 	return (c);
 }
