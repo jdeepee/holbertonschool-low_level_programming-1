@@ -6,8 +6,8 @@ int string_to_integer(char *s){
 	int posit = 1;
 	long numb = 0;
 	while (	*(s+count) != '\0' ){	
-		c = *(s+count)+0;
-		ac = *(s+count+1)+0; /*ac is the next value. So we know when to stop */
+		c = *(s+count);
+		ac = *(s+count+1); /*ac is the next value. So we know when to stop */
 		if( c > 47 && c < 58){
 			tot = c - '0'; 
 			numb =  numb + tot; 
@@ -15,7 +15,7 @@ int string_to_integer(char *s){
 				return 0; /* Too big or small */
 			}
 			if( ac < 47 || ac > 58){
-				break; //Not a number
+				break; /* Not a number */
 			}
 			numb *= 10;
 		}
