@@ -10,9 +10,9 @@ char *nconcat_strings(char *dest, const char *src, int n)
 	while(*src)
 	{
 		if (i < n) {
-		*dest = *src;
-		dest++;
-		count++;
+			*dest = *src;
+			dest++;
+			count++;
 		}
 		i++;
 		src++;

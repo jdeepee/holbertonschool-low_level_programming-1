@@ -38,5 +38,4 @@ void print_array(int *a, int n)
 			print_char(' ');
 		}
 	}
-	
 }
