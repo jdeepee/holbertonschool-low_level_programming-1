@@ -13,7 +13,7 @@ void print_diagonal(int n)
         print_char('\\');
       }
       if (column < level) {
-        print_char(' ');
+        print_char(' '); /* Correct number of spaces */
       }   
     }
     print_char('\n');
