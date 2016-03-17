@@ -11,7 +11,7 @@ char *cap_string(char *h){
 			}
 		}
 		prev = 1;
-		if (*h == ' ') 
+		if (*h == ' ' || *h == '	' || *h == '\n' ) 
 			prev = 0;
 		h++;
 		count++;
