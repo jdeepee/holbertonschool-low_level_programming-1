@@ -12,9 +12,9 @@ char *cap_string(char *h){
 		}
 		prev = 1;
 		if (*h == ' ' || *h == '	' || *h == '\n' ) 
-			prev = 0;
+			prev = 0; /* looking for spaces, tabs, and new lines. */
 		h++;
 		count++;
 	}
-	return &(h[-count]);
+	return &(h[-count]); /*Return the new string */
 }

@@ -16,5 +16,5 @@ char *leet(char *h){
 		h++;
 		count++;
 	}
-	return &(h[-count]);
+	return &(h[-count]); /* return the new string */
 }

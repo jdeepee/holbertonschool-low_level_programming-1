@@ -10,5 +10,5 @@ char *uppercase_string(char *h){
        h++;
        count++;
    }
-	return &(h[-count]);
+	return &(h[-count]); /*Return the new string */
 }
