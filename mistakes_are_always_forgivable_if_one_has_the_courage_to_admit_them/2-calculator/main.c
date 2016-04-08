@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	op_func = get_op_func(*argv[2]); 
 
 	if (op_func == 0) {
-		return 1;
+		return 2;
 	}
 
 	int i;
