@@ -4,6 +4,7 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdio.h>
 
 void free_command(char **command);
 void exit_shell(char **command);
@@ -25,37 +26,53 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv, 
   int status;
   pid_t pid;
   char *path;
+  int i;
 
   while (1) {
     write(1, "shellisfun$:", 12); /* Print Prompt */
     line = read_line(0);
     command = string_split(line, ' ');
-    if (strings_compare(command[0], "exit") == 0) {
-      exit_shell(command);
-    } else if (strings_compare(command[0], "$?") == 0) {
-      print_number(status);
-      print_string("\n");   
+
+    if (str_len(line) < 1){
     } else {
-      pid = fork(); /* Create a fork */
-      if (pid == -1) {
-        write(2, "Fork failed!", 12); /* something went wrong */
-      } else if (pid == 0) {
-        if (command[0][0] != '/' ) {
-        path = get_path(env,command[0]);
-        } else {
-        path = command[0];
-        }
-        if(execve(path,command,env) == -1) /* does program exist */
-        {
-          print_string("shellisfun$: '");
-          print_string(command[0]);
-          print_string("' was not found.\n");          
-        }
-      } else {
-        wait(&status);
-      }
-        free_command(command);
+      if (strings_compare(command[0], "exit") == 0) {
         free(line);
+        free_command(command);
+        exit_shell(command);
+      } else if (strings_compare(command[0], "$?") == 0) {
+        print_number(status);
+        print_string("\n");   
+      } else {
+        pid = fork(); /* Create a fork */
+
+        if (pid == -1) {
+          write(2, "Fork failed!", 12); /* something went wrong */
+        } else if (pid == 0) {
+          if (strings_compare(command[0], "env") == 0){
+            for(i=0; env[i] != NULL; i++){
+              print_string(env[i]);
+            }
+          }
+          if (command[0][0] != '/' ) {
+            path = get_path(env,command[0]);
+          } else {
+            path = command[0];
+          }
+          if (execve(path,command,env) == -1){ /* does program exist */
+            print_string("shellisfun$: '");
+            print_string(command[0]);
+            print_string("' was not found.\n");
+            free(line);
+            free_command(command);
+            free(path);
+            return 1;      
+          }
+        } else {
+          wait(&status);
+        }
+          free_command(command);
+          free(line);
+        }
       }
     }
 }
