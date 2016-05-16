@@ -26,7 +26,7 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv, 
   int status;
   pid_t pid;
   char *path;
-  int i;
+  int i, check;
 
   while (1) {
     write(1, "shellisfun$:", 12); /* Print Prompt */
@@ -48,24 +48,48 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv, 
         if (pid == -1) {
           write(2, "Fork failed!", 12); /* something went wrong */
         } else if (pid == 0) {
+          check = 0;
           if (strings_compare(command[0], "env") == 0){
             for(i=0; env[i] != NULL; i++){
               print_string(env[i]);
+              print_string("\n");
             }
+          }
+          if (strings_compare(command[0], "setenv") == 0){
+            if (command[1] && command[2]){
+              if (setenv(command[1], command[2], 1) == 0){
+                print_string("New variable was created\n");
+              } else {
+                print_string("A error occured when creating the variable\n");
+              }
+            } else {
+              print_string("You are missing parameters for setenv\n");
+            }
+            check = 1;
+            free_command(command);
+          }
+          if (strings_compare(command[0], "unsetenv") == 0){
+            if (unsetenv(command[0]) == 0){
+              print_string("Variable was successfully removed\n");
+            } else {
+              print_string("Error occured when removing variable\n");
+            }
+            check = 1;
+            free_command(command);
           }
           if (command[0][0] != '/' ) {
             path = get_path(env,command[0]);
-          } else {
+          } else{
             path = command[0];
           }
-          if (execve(path,command,env) == -1){ /* does program exist */
+          if (execve(path,command,env) == -1 && check == 0){ /* does program exist */
             print_string("shellisfun$: '");
             print_string(command[0]);
             print_string("' was not found.\n");
             free(line);
             free_command(command);
             free(path);
-            return 1;      
+            return 1;
           }
         } else {
           wait(&status);
