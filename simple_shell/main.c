@@ -16,10 +16,11 @@ char *get_path(char **env, char *cmd);
 void print_number(int);
 int print_char(char);
 void print_string(char *str);
-char *concat_strings(char *dest, const char *src);
+char *concat_strings(char *s1, char *s2);
 int str_ncomp(char *s1, char *s2, int c);
 int str_len(const char *s);
 void free_path(char **paths);
+int getlength(char *str);
 
 int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv, char **env) {
   char **command;
@@ -85,6 +86,10 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv, 
             free_command(command);
             free(path);
             return 1;
+          } else {
+            free(path);
+            free_command(command);
+            free(line);
           }
         } else {
           wait(&status);
@@ -108,9 +113,9 @@ void exit_shell(char **command) {
 
 char *get_path(char **env , char *cmd)
 {
-  char **paths;
-  char **paths2;
+  char **paths, **paths2;
   char *path;
+  char *p;
   int i;
   for (i = 0; env[i]!= NULL; i++){ /* loop for each PATH */
     if(str_ncomp(env[i], "PATH=", str_len("PATH=")) == 0) 
@@ -120,18 +125,22 @@ char *get_path(char **env , char *cmd)
         paths2 = string_split(path, ':');
         break; /* Get the path */
       }   
-  }
+  }  
   free_path(paths);
   for(i = 0; paths2[i] != NULL; i++) {
-     path = concat_strings(concat_strings(paths2[i],"/"),cmd);
-     if(find_ex(path)){
-        free_path(paths2);
-        return path;
+      p = concat_strings(paths2[i], "/");
+      path = concat_strings(p,cmd);
+      if(find_ex(path)){
+        free(p);
+        break;
+      } else {
+        path = '\0';
       }
-     path = '\0';
+      free(p);
+      free(path);
    } 
    free_path(paths2);
-   return path; /* no path found */ 
+   return path;
 }
 
 void free_path(char **paths) { /* free */
@@ -155,23 +164,38 @@ int find_ex(char *s) /* does program exist? */
   }
 }
 
-char *concat_strings(char *dest, const char *src) /* returns "string" + "string" */
-{
-  int count = 0;
-  while(*dest)
-  {
-    dest++;
-    count++;
+int getlength(char *str) {
+  int total = 0; 
+  while (*str != 0) {
+    total++;
+    str++;
   }
-  while(*src)
-  {
-    *dest = *src;
-    src++;
-    dest++;
-    count++;
+  return total; /* return length of string */
+}
+
+char *concat_strings(char *s1, char *s2) {
+
+  int tlen = getlength(s1) + getlength(s2);
+
+  char *ret = malloc(sizeof(char)*(tlen+1));
+  char *retc = ret;
+
+  if (ret == NULL) return ret; /* Failed to allocate the memory. */
+
+  while (*s1 != 0) {
+    *retc = *s1;
+    retc++;
+    s1++; /* add the first part of the string */
   }
-  *dest = '\0';
-  return &(dest[-count]);
+
+  while (*s2 != 0) {
+    *retc = *s2;
+    retc++;
+    s2++; /* add the second part of the string */
+  }
+
+  *retc = 0;
+  return ret;
 }
 
 int string_to_integer(char *s){
